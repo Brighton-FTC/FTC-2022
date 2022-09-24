@@ -5,33 +5,33 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.ServoGrabber;
-import org.firstinspires.ftc.teamcode.inputs.GamepadButton;
-import org.firstinspires.ftc.teamcode.inputs.Inputs;
-import org.firstinspires.ftc.teamcode.inputs.XY;
-import org.firstinspires.ftc.teamcode.inputs.inputs.ToggleableButton;
-import org.firstinspires.ftc.teamcode.wrappers.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.ButtonName;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.InputSide;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.RawButton;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.ToggleableButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickControllers.RawJoystick;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 
 @TeleOp(name = "Team 1 - Move grabber", group = "1_TeleOp")
-public class TeleOpMoveGrabber extends OpModeWrapper {
+abstract public class TeleOpMoveGrabber extends TeleOpModeBase {
     private ServoGrabber grabber;
-    private ToggleableButton dirToggle;
+    private ToggleableButtonController dirToggle;
+    private RawJoystick leftJoystick = new RawJoystick(gamepad1, InputSide.LEFT_INPUT);
 
     @Override
     public void setup() {
         grabber = new ServoGrabber(hardwareMap.get(Servo.class, "grabber"), Constants.TEAM1_GRABBER_CLOSED_POS, Constants.TEAM1_GRABBER_OPEN_POS);
-        dirToggle = new ToggleableButton(GamepadButton.CROSS, false);
+        dirToggle = new ToggleableButtonController(new RawButton(gamepad1, ButtonName.CROSS), false);
     }
 
     @Override
     public void loop() {
-        XY joystickInfo = Inputs.getRightJoystickData();
-
-        boolean isReversed = dirToggle.processTick();
+        boolean isReversed = dirToggle.getValue();
 
         grabber.setServoReversed(isReversed);
 
-        grabber.rotateTo(joystickInfo.y * 0.4);
-        telemetry.addData("Joystick", joystickInfo.y);
+        grabber.rotateTo(leftJoystick.get_y() * 0.4);
+        telemetry.addData("Joystick", leftJoystick.get_y());
         telemetry.addData("isReversed", isReversed);
         telemetry.addData("Pos", grabber.getRotation());
 

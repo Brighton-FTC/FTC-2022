@@ -1,0 +1,155 @@
+package org.firstinspires.ftc.teamcode.libs.brightonCollege.testing;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.controllers.DriveTrainController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.CosMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.RootMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.ButtonName;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.DebouncedButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.ToggleableButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
+
+/**
+ * An opmode for testing motors
+ * Press L_BUMPER to toggle drivetrain operation (note that it might override motors 0 and 1
+ * Drivetrain:
+ *  Left joystick to control
+ *  Circle to reset counts on telemetry
+ * Motors:
+ *  Press R_BUMPER to toggle between selecting motors and servos
+ *  Press the circle, square, etc. buttons to select a motor
+ *  Cross to switch off motor
+ *  Move the left joystick to change the power given to the motor;
+ *  if you change motors with the joystick held, the motor will stay at that power
+ */
+@TeleOp(name = "Test motors", group = "Test")
+public class TestMotors extends TeleOpModeBase {
+
+
+    String[] motorNames = {
+            "motor_0",
+            "motor_1",
+            "motor_2",
+            "motor_3",
+    };  int motorId = 0;
+
+    String[] servoNames = {
+            "servo_0",
+            "servo_1",
+            "servo_2",
+            "servo_3",
+    };
+    Servo[] crServos;
+    DcMotor[] motors;
+    DebouncedButtonController[] selectionButtons;
+    DebouncedButtonController resetDrivetrainEncoders;
+    ToggleableButtonController selectServosToggleButton;
+    ToggleableButtonController driveToggleButton;
+    ToggleableButtonController driveTrainLockHorizontalComponentButton;
+
+    DriveTrainController driveTrain;
+    int driveLeftLastPos;
+    int driveRightLastPos;
+
+    @Override
+    public void setup() {
+        motors = new DcMotor[4];
+        crServos = new Servo[4];
+
+        resetDrivetrainEncoders = new DebouncedButtonController(ButtonName.CIRCLE);
+        driveTrainLockHorizontalComponentButton = new ToggleableButtonController(ButtonName.CROSS, false);
+
+        selectServosToggleButton = new ToggleableButtonController(ButtonName.R_BUMPER, false);
+        driveToggleButton = new ToggleableButtonController(ButtonName.L_BUMPER, true);
+
+        driveTrain = new DriveTrainController(new TankDrive(
+                hardwareMap.get(DcMotor.class, motorNames[0]),
+                hardwareMap.get(DcMotor.class, motorNames[1]),
+                false
+        ),
+                new RootMapping(2),
+                new CosMapping(),
+                0.0,
+                0.0
+        );
+        // Number of counts since start
+        driveLeftLastPos = driveTrain.tankDrive.leftMotor.getCurrentPosition();
+        driveRightLastPos = driveTrain.tankDrive.leftMotor.getCurrentPosition();
+
+        for (int i = 0; i < motorNames.length; i++) {
+            crServos[i] = hardwareMap.get(Servo.class, servoNames[i]);
+        }
+        for (int i = 0; i < motorNames.length; i++) {
+            motors[i] = hardwareMap.get(DcMotor.class, motorNames[i]);
+        }
+        selectionButtons = new DebouncedButtonController[] {
+                new DebouncedButtonController(ButtonName.TRIANGLE),
+                new DebouncedButtonController(ButtonName.CIRCLE),
+                new DebouncedButtonController(ButtonName.CROSS),
+                new DebouncedButtonController(ButtonName.SQUARE)
+        };
+    }
+
+    @Override
+    public void loop() {
+        boolean isDriving = driveToggleButton.processTick();
+        if (isDriving) {
+            XY leftJoystick = Inputs.getLeftJoystickData();
+
+            if (resetDrivetrainEncoders.processTick()) {
+                // Reset position
+                driveLeftLastPos = driveTrain.tankDrive.leftMotor.getCurrentPosition();
+                driveRightLastPos = driveTrain.tankDrive.rightMotor.getCurrentPosition();
+            }
+
+            double speed = -leftJoystick.y * 0.5;
+            double turn = leftJoystick.x;
+
+            if (driveTrainLockHorizontalComponentButton.processTick()) {
+                telemetry.addLine("Drivetrain locked forwards");
+                turn = 0.0;
+            }
+
+            telemetry.addLine("Driving");
+
+            driveTrain.drive_scaled(speed, turn);
+
+            telemetry.addData("Drivetrain L Counts", driveTrain.tankDrive.leftMotor.getCurrentPosition() - driveLeftLastPos);
+            telemetry.addData("Drivetrain R Counts", driveTrain.tankDrive.rightMotor.getCurrentPosition() - driveRightLastPos);
+
+            telemetry.update();
+            return;
+        }
+
+        boolean isSelectingServos = selectServosToggleButton.processTick();
+        telemetry.addData("Selected "+ (isSelectingServos ? "servo": "motor") + ": ", (isSelectingServos ? servoNames : motorNames)[motorId]);
+        telemetry.addLine("Setting motor powers");
+        telemetry.addLine("Press triangle/circle/etc buttons");
+
+        // select one of the motors
+        for (int i = 0; i < selectionButtons.length; i++) if (selectionButtons[i].processTick()) motorId = i;
+
+        double power = Inputs.getRightJoystickData().y;
+        if (isSelectingServos) {
+            Servo servo = crServos[motorId];
+
+//            servo.setPower(power);
+            servo.setPosition(power);
+
+            telemetry.addData("Power/desired pos", power);
+            telemetry.addData("Position", servo.getPosition());
+        } else {
+            DcMotor motor = motors[motorId];
+            motor.setPower(power);
+            telemetry.addData("Power", power);
+            telemetry.addData("Counts number", motor.getCurrentPosition());
+        }
+
+        telemetry.update();
+    }
+}

@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.libs.util.TelemetryContainer;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
 public class ServoGrabber {
     private final Servo servo;

@@ -8,29 +8,27 @@ import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Timer;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.DiscretePositionArm;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.controllers.DriveTrainController;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.ServoGrabber;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.CosMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.RootMapping;
-import org.firstinspires.ftc.teamcode.inputs.GamepadButton;
-import org.firstinspires.ftc.teamcode.inputs.Inputs;
-import org.firstinspires.ftc.teamcode.inputs.XY;
-import org.firstinspires.ftc.teamcode.inputs.inputs.DebouncedButton;
-import org.firstinspires.ftc.teamcode.inputs.inputs.ToggleableButton;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.CosMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.RootMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.ButtonName;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.DebouncedButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.ToggleableButtonController;
 import org.firstinspires.ftc.teamcode.opModes.subroutines.autonomous.team1.Team1Deposit;
 import org.firstinspires.ftc.teamcode.opModes.subroutines.autonomous.team2.Team2Deposit;
-import org.firstinspires.ftc.teamcode.wrappers.LinearOpModeWrapper;
-import org.firstinspires.ftc.teamcode.wrappers.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousModeBase;
 
 @TeleOp(name = "Puppeteer test autonomous", group = "Test")
-public class PuppeteerTestAutonomous extends LinearOpModeWrapper {
-    DebouncedButton startDriveForward;
-    DebouncedButton startTurn;
-    DebouncedButton startDeposit;
-    DebouncedButton startDeliver;
+public class PuppeteerTestAutonomous extends AutonomousModeBase {
+    DebouncedButtonController startDriveForward;
+    DebouncedButtonController startTurn;
+    DebouncedButtonController startDeposit;
+    DebouncedButtonController startDeliver;
 
-    ToggleableButton isTeam1Button;
+    ToggleableButtonController isTeam1Button;
 
     PuppeteerTestAutonomousState state = PuppeteerTestAutonomousState.FORWARD;
 
@@ -45,16 +43,16 @@ public class PuppeteerTestAutonomous extends LinearOpModeWrapper {
     @Override
     public void run() throws InterruptedException {
         // Inputs
-        isTeam1Button = new ToggleableButton(GamepadButton.R_BUMPER, true);
-        startDriveForward = new DebouncedButton(GamepadButton.D_UP);
-        startTurn = new DebouncedButton(GamepadButton.D_LEFT);
-        startDeposit = new DebouncedButton(GamepadButton.D_RIGHT);
-        startDeliver = new DebouncedButton(GamepadButton.D_DOWN);
+        isTeam1Button = new ToggleableButtonController(ButtonName.R_BUMPER, true);
+        startDriveForward = new DebouncedButtonController(ButtonName.D_UP);
+        startTurn = new DebouncedButtonController(ButtonName.D_LEFT);
+        startDeposit = new DebouncedButtonController(ButtonName.D_RIGHT);
+        startDeliver = new DebouncedButtonController(ButtonName.D_DOWN);
 
         spinner = new CarouselSpinner(hardwareMap.get(DcMotor.class, "motor_3"), false);
 
         // Actuators
-        driveTrain = new DriveTrainController(new DriveTrain(
+        driveTrain = new DriveTrainController(new TankDrive(
                 hardwareMap.get(DcMotor.class, "motor_0"),
                 hardwareMap.get(DcMotor.class, "motor_1"),
                 false
@@ -107,13 +105,13 @@ public class PuppeteerTestAutonomous extends LinearOpModeWrapper {
             switch (state){
                 case FORWARD:
                     driveTrain.drive_unscaled(-leftJoystick.y, 0);
-                    telemetry.addData("Right pos", driveTrain.driveTrain.rightMotor.getCurrentPosition());
-                    telemetry.addData("Left pos", driveTrain.driveTrain.leftMotor.getCurrentPosition());
+                    telemetry.addData("Right pos", driveTrain.tankDrive.rightMotor.getCurrentPosition());
+                    telemetry.addData("Left pos", driveTrain.tankDrive.leftMotor.getCurrentPosition());
                     break;
                 case TURN:
                     driveTrain.drive_unscaled(0, -leftJoystick.x);
-                    telemetry.addData("Right pos", driveTrain.driveTrain.rightMotor.getCurrentPosition());
-                    telemetry.addData("Left pos", driveTrain.driveTrain.leftMotor.getCurrentPosition());
+                    telemetry.addData("Right pos", driveTrain.tankDrive.rightMotor.getCurrentPosition());
+                    telemetry.addData("Left pos", driveTrain.tankDrive.leftMotor.getCurrentPosition());
                     break;
                 case DELIVER:
                     spinner.spin(0.5);

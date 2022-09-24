@@ -4,15 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainController;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.CosMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.LinearMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.RootMapping;
-import org.firstinspires.ftc.teamcode.libs.util.TelemetryContainer;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.controllers.DriveTrainController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.CosMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.RootMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
 public class AutonomousDriveForward {
     // TODO: Should we move this to OpModes/subroutines as I think it is not team-specific?
@@ -21,7 +18,7 @@ public class AutonomousDriveForward {
         HardwareMap hardwareMap = opMode.hardwareMap;
 
         // BODY
-        DriveTrainController driveTrain = new DriveTrainController(new DriveTrain(
+        DriveTrainController driveTrain = new DriveTrainController(new TankDrive(
                 hardwareMap.get(DcMotor.class, "left_drivetrain_motor"),
                 hardwareMap.get(DcMotor.class, "right_drivetrain_motor"),
                 false

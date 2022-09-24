@@ -8,20 +8,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.CarouselSpinner;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.DiscretePositionArm;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.controllers.DriveTrainController;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.ServoGrabber;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.CosMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.RootMapping;
-import org.firstinspires.ftc.teamcode.inputs.GamepadButton;
-import org.firstinspires.ftc.teamcode.inputs.Inputs;
-import org.firstinspires.ftc.teamcode.inputs.XY;
-import org.firstinspires.ftc.teamcode.inputs.inputs.DebouncedButton;
-import org.firstinspires.ftc.teamcode.inputs.inputs.ToggleableButton;
-import org.firstinspires.ftc.teamcode.libs.util.Maths;
-import org.firstinspires.ftc.teamcode.wrappers.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.CosMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.RootMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.ButtonName;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.DebouncedButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.ToggleableButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.Maths;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 
-abstract class TeleOpGeneric extends OpModeWrapper {
+abstract class TeleOpGeneric extends TeleOpModeBase {
 
     private DriveTrainController driveTrain;
     private CarouselSpinner spinner;
@@ -30,18 +29,18 @@ abstract class TeleOpGeneric extends OpModeWrapper {
 
     Team1ArmState armState = Team1ArmState.FLOATING;
 
-    DebouncedButton raiseArmButton;
-    DebouncedButton floatArmButton;
-    DebouncedButton powerDownArmButton;
-    ToggleableButton grabberToggle;
+    DebouncedButtonController raiseArmButton;
+    DebouncedButtonController floatArmButton;
+    DebouncedButtonController powerDownArmButton;
+    ToggleableButtonController grabberToggle;
 
     public void custom_setup() {
-        raiseArmButton = new DebouncedButton(GamepadButton.TRIANGLE);
-        floatArmButton = new DebouncedButton(GamepadButton.CIRCLE);
-        powerDownArmButton = new DebouncedButton(GamepadButton.CROSS);
-        grabberToggle = new ToggleableButton(GamepadButton.R_BUMPER, true); // Closed at start
+        raiseArmButton = new DebouncedButtonController(ButtonName.TRIANGLE);
+        floatArmButton = new DebouncedButtonController(ButtonName.CIRCLE);
+        powerDownArmButton = new DebouncedButtonController(ButtonName.CROSS);
+        grabberToggle = new ToggleableButtonController(ButtonName.R_BUMPER, true); // Closed at start
         spinner = new CarouselSpinner(hardwareMap.get(DcMotor.class, "carousel_spinner"), false);
-        driveTrain = new DriveTrainController(new DriveTrain(
+        driveTrain = new DriveTrainController(new TankDrive(
                 hardwareMap.get(DcMotor.class, "left_drivetrain_motor"),
                 hardwareMap.get(DcMotor.class, "right_drivetrain_motor"),
                 true

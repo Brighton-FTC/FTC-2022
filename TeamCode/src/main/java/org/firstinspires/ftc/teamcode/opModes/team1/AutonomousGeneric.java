@@ -5,19 +5,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.DiscretePositionArm;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.controllers.DriveTrainController;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.ServoGrabber;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.CosMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.RootMapping;
-import org.firstinspires.ftc.teamcode.opModes.subroutines.AutonomousDriveForward;
-import org.firstinspires.ftc.teamcode.opModes.subroutines.autonomous.Deliver;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.CosMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.RootMapping;
 import org.firstinspires.ftc.teamcode.opModes.subroutines.autonomous.DriveForwardCounts;
-import org.firstinspires.ftc.teamcode.opModes.subroutines.autonomous.TurnCounts;
-import org.firstinspires.ftc.teamcode.opModes.subroutines.autonomous.team1.Team1Deposit;
-import org.firstinspires.ftc.teamcode.wrappers.LinearOpModeWrapper;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousModeBase;
 
-public abstract class AutonomousGeneric extends LinearOpModeWrapper {
+public abstract class AutonomousGeneric extends AutonomousModeBase {
     protected boolean isSpinnerReversed;
     @Override
     public void run() throws InterruptedException {
@@ -29,7 +25,7 @@ public abstract class AutonomousGeneric extends LinearOpModeWrapper {
                 Constants.TEAM1_ARM_FRONT_COUNTS,
                 Constants.TEAM1_ARM_BACK_COUNTS
         );
-        DriveTrainController driveTrain = new DriveTrainController(new DriveTrain(
+        DriveTrainController driveTrain = new DriveTrainController(new TankDrive(
                 hardwareMap.get(DcMotor.class, "left_drivetrain_motor"),
                 hardwareMap.get(DcMotor.class, "right_drivetrain_motor"),
                 true

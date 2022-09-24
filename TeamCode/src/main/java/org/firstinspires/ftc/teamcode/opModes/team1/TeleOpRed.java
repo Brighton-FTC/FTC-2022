@@ -10,7 +10,7 @@ public class TeleOpRed extends TeleOpGeneric {
     }
 
     @Override
-    public void loop() {
+    public void every_tick() {
         custom_loop(true);
     }
 }

@@ -2,26 +2,21 @@ package org.firstinspires.ftc.teamcode.opModes.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainController;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.CosMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.LinearMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.RootMapping;
-import org.firstinspires.ftc.teamcode.inputs.GamepadButton;
-import org.firstinspires.ftc.teamcode.inputs.Inputs;
-import org.firstinspires.ftc.teamcode.inputs.XY;
-import org.firstinspires.ftc.teamcode.inputs.inputs.DebouncedButton;
-import org.firstinspires.ftc.teamcode.inputs.inputs.ToggleableButton;
-import org.firstinspires.ftc.teamcode.wrappers.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.controllers.DriveTrainController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.CosMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.RootMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.ButtonName;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.DebouncedButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 
 @TeleOp(name = "Create drivetrain curves", group = "Test")
-public class CreateDrivetrainCurves extends OpModeWrapper {
+public class CreateDrivetrainCurves extends TeleOpModeBase {
     DriveTrainController driveTrain;
 
-    DebouncedButton freezeReadings;
+    DebouncedButtonController freezeReadings;
 
     double storedX;
     double storedY;
@@ -30,7 +25,7 @@ public class CreateDrivetrainCurves extends OpModeWrapper {
 
     @Override
     public void setup() {
-        driveTrain = new DriveTrainController(new DriveTrain(
+        driveTrain = new DriveTrainController(new TankDrive(
                 hardwareMap.get(DcMotor.class, "motor_0"),
                 hardwareMap.get(DcMotor.class, "motor_1"),
                 false
@@ -40,7 +35,7 @@ public class CreateDrivetrainCurves extends OpModeWrapper {
                 0.0,
                 0.0
         );
-        freezeReadings = new DebouncedButton(GamepadButton.R_BUMPER);
+        freezeReadings = new DebouncedButtonController(ButtonName.R_BUMPER);
     }
 
     @Override

@@ -5,45 +5,44 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.CarouselSpinner;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.controllers.DriveTrainController;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.DiscretePositionArm;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.ServoIntake;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.CosMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.RootMapping;
-import org.firstinspires.ftc.teamcode.inputs.GamepadButton;
-import org.firstinspires.ftc.teamcode.inputs.Inputs;
-import org.firstinspires.ftc.teamcode.inputs.XY;
-import org.firstinspires.ftc.teamcode.inputs.inputs.DebouncedButton;
-import org.firstinspires.ftc.teamcode.inputs.inputs.ToggleableButton;
-import org.firstinspires.ftc.teamcode.libs.util.Maths;
-import org.firstinspires.ftc.teamcode.wrappers.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.LinearMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.RootMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.ButtonName;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.DebouncedButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.ToggleableButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.Maths;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 
-abstract class TeleOpGeneric extends OpModeWrapper {
+abstract class TeleOpGeneric extends TeleOpModeBase {
 
     private DriveTrainController driveTrain;
     private CarouselSpinner spinner;
     private DiscretePositionArm arm;
     private ServoIntake intake;
     
-    DebouncedButton raiseArmButton;
-    DebouncedButton floatArmButton;
-    DebouncedButton powerDownArmButton;
-    ToggleableButton isIntakeEnabledButton;
+    DebouncedButtonController raiseArmButton;
+    DebouncedButtonController floatArmButton;
+    DebouncedButtonController powerDownArmButton;
+    ToggleableButtonController isIntakeEnabledButton;
 
     public void custom_setup() {
-        raiseArmButton = new DebouncedButton(GamepadButton.TRIANGLE);
-        floatArmButton = new DebouncedButton(GamepadButton.CIRCLE);
-        powerDownArmButton = new DebouncedButton(GamepadButton.CROSS);
-        isIntakeEnabledButton = new ToggleableButton(GamepadButton.SQUARE, false);
+        raiseArmButton = new DebouncedButtonController(ButtonName.TRIANGLE);
+        floatArmButton = new DebouncedButtonController(ButtonName.CIRCLE);
+        powerDownArmButton = new DebouncedButtonController(ButtonName.CROSS);
+        isIntakeEnabledButton = new ToggleableButtonController(ButtonName.SQUARE, false);
         spinner = new CarouselSpinner(hardwareMap.get(DcMotor.class, "carousel_spinner"), false);
-        driveTrain = new DriveTrainController(new DriveTrain(
+        driveTrain = new DriveTrainController(new TankDrive(
                 hardwareMap.get(DcMotor.class, "left_drivetrain_motor"),
                 hardwareMap.get(DcMotor.class, "right_drivetrain_motor"),
                 false
         ),
                 new RootMapping(2),
-                new CosMapping(),
+                new LinearMapping(),
                 Constants.TEAM2_DRIVETRAIN_FORWARDS_GRADIENT,
                 Constants.TEAM2_DRIVETRAIN_FORWARDS_INTERCEPT
         );
@@ -90,7 +89,11 @@ abstract class TeleOpGeneric extends OpModeWrapper {
         // if arm powered down, slow down for more control
         boolean isArmPoweredDown = arm.getPower() == 0;
 
-        double scale = isArmPoweredDown ? 0.5 : 1.0;
+        boolean isBoost = Inputs.isPressed(ButtonName.D_UP);
+
+        double scale = 0.5;
+        if(isArmPoweredDown) scale = 0.3;
+        if(isBoost) scale = 1.0;
 
         /* Drivetrain */
         // CONTROLS: Left joystick
@@ -100,7 +103,7 @@ abstract class TeleOpGeneric extends OpModeWrapper {
         double speed = Maths.clamp(-leftJoystick.y - rightJoystick.y, -1, 1);
         double turn = Maths.clamp(-leftJoystick.x + rightJoystick.x, -1, 1);
 
-        driveTrain.drive_scaled(speed, turn, scale, 0.4);
+        driveTrain.drive_scaled(speed, turn, scale, 1.3);
 
         telemetry.update();
     }

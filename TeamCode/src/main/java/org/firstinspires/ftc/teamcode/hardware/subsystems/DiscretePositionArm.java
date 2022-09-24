@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.libs.util.TelemetryContainer;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
 /**
  * Team 1's arm which flips over the back of the robot to deliver freight

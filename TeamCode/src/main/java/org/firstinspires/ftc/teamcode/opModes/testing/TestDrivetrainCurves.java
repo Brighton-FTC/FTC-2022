@@ -3,22 +3,20 @@ package org.firstinspires.ftc.teamcode.opModes.testing;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainController;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.CosMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.CubicMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.JoystickMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.LinearMapping;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.joystickMappings.RootMapping;
-import org.firstinspires.ftc.teamcode.inputs.GamepadButton;
-import org.firstinspires.ftc.teamcode.inputs.Inputs;
-import org.firstinspires.ftc.teamcode.inputs.XY;
-import org.firstinspires.ftc.teamcode.inputs.inputs.IncrementButtons;
-import org.firstinspires.ftc.teamcode.wrappers.OpModeWrapper;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.TankDrive;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.subsystems.drivetrain.controllers.DriveTrainController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.CosMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.CubicMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.JoystickMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.LinearMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.joystickMappings.RootMapping;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.ButtonName;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.buttonControllers.IncrementButtonController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 
 @TeleOp(name = "Test drivetrain curves", group = "Test")
-public class TestDrivetrainCurves extends OpModeWrapper {
+public class TestDrivetrainCurves extends TeleOpModeBase {
     DriveTrainController driveTrain;
 
     final JoystickMapping[] mappings = new JoystickMapping[] {
@@ -30,12 +28,12 @@ public class TestDrivetrainCurves extends OpModeWrapper {
             new RootMapping(4),
     };
 
-    final IncrementButtons speedMappingSelector = new IncrementButtons(GamepadButton.D_UP, GamepadButton.D_DOWN, 0, 1);
-    final IncrementButtons turningMappingSelector = new IncrementButtons(GamepadButton.D_RIGHT, GamepadButton.D_LEFT, 0, 1);
+    final IncrementButtonController speedMappingSelector = new IncrementButtonController(ButtonName.D_UP, ButtonName.D_DOWN, 0, 1);
+    final IncrementButtonController turningMappingSelector = new IncrementButtonController(ButtonName.D_RIGHT, ButtonName.D_LEFT, 0, 1);
 
     @Override
     public void setup(){
-         driveTrain = new DriveTrainController(new DriveTrain(
+         driveTrain = new DriveTrainController(new TankDrive(
                 hardwareMap.get(DcMotor.class, "motor_0"),
                 hardwareMap.get(DcMotor.class, "motor_1"),
                 false
